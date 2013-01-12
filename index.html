@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>WebStats: Visualization Promotes Information</title>	
+		<style type="text/css">
+			body
+			{
+				font-family: sans-serif, arial;
+				margin: 0px;
+				padding: 0px;
+				overflow-x: hidden;
+			}
+			.logo-bar > img
+			{
+				border: solid 10px white;
+				vertical-align: bottom;
+				margin-left: 0.5em;
+			}
+			.logo-bar
+			{
+				position: relative;
+				width: 100%;
+				background: #4fc4ff;
+				color: #FFF;
+				font-size: 3em;
+				padding: 1em;
+			}
+		</style>
+		<script type="application/javascript">
+
+			/* TODO: Add XLabels, data values, etc as parameters */
+			function draw()
+			{
+				/* Set canvas size dynamically */
+				var canvas = document.getElementById("canvas");
+				var ctx = canvas.getContext("2d");
+
+				ctx.canvas.width  = window.innerWidth / 2;
+				ctx.canvas.height = window.innerHeight / 2;
+				ctx.canvas.style.backgroundImage = "url('images/chart-vanilla.png')";
+				ctx.canvas.style.border = "solid 2px #CCC";
+				ctx.canvas.style.marginTop = "2em";
+				ctx.canvas.style.marginLeft = "25%";
+				ctx.canvas.style.marginBottom = "2em";
+
+				var chartTitle = "Total Nonfarm Employment 2012";
+				var endingPointY = canvas.height / 1.5;
+				var barsStartingPointY = endingPointY;
+				var AxisLineWidth = 2;
+				var YAxisLabel = "Thousands";
+				var values = [137118,138023,133561,129279,130456,132461];
+				var barWidth = (ctx.canvas.width / values.length) / 5;
+				var barsStartingPointX = ctx.canvas.width / values.length;
+
+				var colors = ["#070","#080","#020","#400","#300","#010"];
+				var XLabels = ["2007","2008","2009","2010","2011","2012"];
+				var barPadding = (canvas.width / values.length) / 1.4;
+				var XAxisWidth = (ctx.canvas.width / values.length) * (values.length - 1);
+				var maxValue = 0;
+				var scaleMultiplier = ctx.canvas.height * 0.4;
+				var startingPointY = barsStartingPointY - scaleMultiplier;
+
+				/* Y Axis Label's Coordinates */
+				var YLabelXCoordinate = XAxisWidth + ((ctx.canvas.width / values.length) / 2);
+				var YLabelYCoordinate = ctx.canvas.height / 2;
+
+				var lineHeight = 12;
+
+				/* Find max value to scale other values */
+				for(var k = 0; k < values.length; k++)
+				{
+					if(values[k] > maxValue)
+						maxValue = values[k];
+				}
+
+				/* Draw highest value on Y Axis */
+				ctx.lineWidth = AxisLineWidth;
+				ctx.beginPath();
+				ctx.moveTo(barsStartingPointX - 5,startingPointY);
+				ctx.lineTo(barsStartingPointX + 5,startingPointY);
+				ctx.stroke();
+				ctx.textAlign = "center";
+				ctx.font = "bold " + lineHeight + "px sans-serif";
+				ctx.fillText(maxValue,barsStartingPointX/2,startingPointY + (lineHeight / 2));
+
+				/* Settings for line strokes */
+				ctx.lineWidth = AxisLineWidth;
+				ctx.strokeStyle = "#000";
+
+				/* Draw Y Axis Label */
+				ctx.textAlign = "center";
+				ctx.strokeStyle = "#000";
+				ctx.font = "bold " + lineHeight + "px sans-serif";
+				ctx.fillText(YAxisLabel, YLabelXCoordinate, YLabelYCoordinate);
+
+				/* Draw Axes */
+				ctx.beginPath();
+				ctx.moveTo(barsStartingPointX,startingPointY);
+				ctx.lineTo(barsStartingPointX,endingPointY);
+				ctx.lineTo(XAxisWidth, endingPointY);
+				ctx.stroke();
+
+				/* Draw bars and text */
+				for(var i = 0; i < values.length; i++)
+				{
+					if(colors.length > 1)
+					{
+						ctx.fillStyle = colors[i];
+					}
+					else
+					{
+						ctx.fillStyle = colors[0];
+					}
+					ctx.fillRect((ctx.canvas.width / 50) + barsStartingPointX + (i * barPadding), barsStartingPointY - ((values[i] / maxValue) * scaleMultiplier) - AxisLineWidth, barWidth, (values[i] / maxValue) * scaleMultiplier);
+					
+					/* Begin drawing X Labels */
+					ctx.textAlign = "center";
+					ctx.fillText(XLabels[i], barsStartingPointX + (i * barPadding) + barWidth, ctx.canvas.height * 0.8);
+				}
+
+				/* Chart title */
+				ctx.fillStyle = "black";
+				ctx.font = "bold 20px sans-serif";
+				ctx.textAlign = "center";
+				ctx.fillText(chartTitle, ctx.canvas.width / 2, ctx.canvas.height / 6);
+			}
+		</script>
+	</head>
+	<body onLoad="draw()">
+		<div class="logo-bar">
+			WebStats<img src="images/logo.png" alt="Logo" />
+		</div>
+
+		<div id="chart">
+			<canvas id="canvas"></canvas>
+		</div>
+	</body>
+</html>
