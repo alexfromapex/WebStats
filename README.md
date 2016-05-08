@@ -1,4 +1,4 @@
 WebStats
 ========
 
-Using Javascript and the Canvas Element to display statistical information in the form of a graph.
+A simple JavaScript library to facilitate creation of charts using the HTML Canvas element.
