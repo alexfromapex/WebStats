@@ -26,114 +26,72 @@
 				font-size: 3em;
 				padding: 1em;
 			}
-		</style>
-		<script type="application/javascript">
-
-			/* TODO: Add XLabels, data values, etc as parameters */
-			function draw()
-			{
-				/* Set canvas size dynamically */
-				var canvas = document.getElementById("canvas");
-				var ctx = canvas.getContext("2d");
-
-				ctx.canvas.width  = window.innerWidth / 2;
-				ctx.canvas.height = window.innerHeight / 2;
-				ctx.canvas.style.backgroundImage = "url('images/chart-vanilla.png')";
-				ctx.canvas.style.border = "solid 2px #CCC";
-				ctx.canvas.style.marginTop = "2em";
-				ctx.canvas.style.marginLeft = "25%";
-				ctx.canvas.style.marginBottom = "2em";
-
-				var chartTitle = "Total Nonfarm Employment 2012";
-				var endingPointY = canvas.height / 1.5;
-				var barsStartingPointY = endingPointY;
-				var AxisLineWidth = 2;
-				var YAxisLabel = "Thousands";
-				var values = [137118,138023,133561,129279,130456,132461];
-				var barWidth = (ctx.canvas.width / values.length) / 5;
-				var barsStartingPointX = ctx.canvas.width / values.length;
-
-				var colors = ["#070","#080","#020","#400","#300","#010"];
-				var XLabels = ["2007","2008","2009","2010","2011","2012"];
-				var barPadding = (canvas.width / values.length) / 1.4;
-				var XAxisWidth = (ctx.canvas.width / values.length) * (values.length - 1);
-				var maxValue = 0;
-				var scaleMultiplier = ctx.canvas.height * 0.4;
-				var startingPointY = barsStartingPointY - scaleMultiplier;
-
-				/* Y Axis Label's Coordinates */
-				var YLabelXCoordinate = XAxisWidth + ((ctx.canvas.width / values.length) / 2);
-				var YLabelYCoordinate = ctx.canvas.height / 2;
-
-				var lineHeight = 12;
-
-				/* Find max value to scale other values */
-				for(var k = 0; k < values.length; k++)
-				{
-					if(values[k] > maxValue)
-						maxValue = values[k];
-				}
-
-				/* Draw highest value on Y Axis */
-				ctx.lineWidth = AxisLineWidth;
-				ctx.beginPath();
-				ctx.moveTo(barsStartingPointX - 5,startingPointY);
-				ctx.lineTo(barsStartingPointX + 5,startingPointY);
-				ctx.stroke();
-				ctx.textAlign = "center";
-				ctx.font = "bold " + lineHeight + "px sans-serif";
-				ctx.fillText(maxValue,barsStartingPointX/2,startingPointY + (lineHeight / 2));
-
-				/* Settings for line strokes */
-				ctx.lineWidth = AxisLineWidth;
-				ctx.strokeStyle = "#000";
-
-				/* Draw Y Axis Label */
-				ctx.textAlign = "center";
-				ctx.strokeStyle = "#000";
-				ctx.font = "bold " + lineHeight + "px sans-serif";
-				ctx.fillText(YAxisLabel, YLabelXCoordinate, YLabelYCoordinate);
-
-				/* Draw Axes */
-				ctx.beginPath();
-				ctx.moveTo(barsStartingPointX,startingPointY);
-				ctx.lineTo(barsStartingPointX,endingPointY);
-				ctx.lineTo(XAxisWidth, endingPointY);
-				ctx.stroke();
-
-				/* Draw bars and text */
-				for(var i = 0; i < values.length; i++)
-				{
-					if(colors.length > 1)
-					{
-						ctx.fillStyle = colors[i];
-					}
-					else
-					{
-						ctx.fillStyle = colors[0];
-					}
-					ctx.fillRect((ctx.canvas.width / 50) + barsStartingPointX + (i * barPadding), barsStartingPointY - ((values[i] / maxValue) * scaleMultiplier) - AxisLineWidth, barWidth, (values[i] / maxValue) * scaleMultiplier);
-					
-					/* Begin drawing X Labels */
-					ctx.textAlign = "center";
-					ctx.fillText(XLabels[i], barsStartingPointX + (i * barPadding) + barWidth, ctx.canvas.height * 0.8);
-				}
-
-				/* Chart title */
-				ctx.fillStyle = "black";
-				ctx.font = "bold 20px sans-serif";
-				ctx.textAlign = "center";
-				ctx.fillText(chartTitle, ctx.canvas.width / 2, ctx.canvas.height / 6);
+			canvas,h1 {
+				display:block;
+				margin:20px auto;
+				max-width:60%;
+				text-align:center;
 			}
-		</script>
+		</style>
+		<script type="application/javascript" src="./js/jquery-1.7.2.min.js"></script>
+		<script type="application/javascript" src="./js/webstats.js"></script>
 	</head>
-	<body onLoad="draw()">
+	<body>
+		<script>
+		var monthNames = ["January", "February", "March", "April", "May", "June",
+		  "July", "August", "September", "October", "November", "December"
+		];
+		var districts = {};
+		var types = {};
+		$.getJSON('https://data.raleighnc.gov/resource/3bhm-we7a.json',function(data){
+			for(var i in data)
+			{
+				if(data.hasOwnProperty(i))
+					for(var j in data[i])
+					{
+						/* Districts */
+						if(typeof(districts[data[i][j]]) === "undefined" && j === "district")
+							districts[data[i][j]] = 1;
+						else if(j === "district")
+							districts[data[i][j]]++;
+
+						/* Type of Incident */
+						if(typeof(types[data[i][j]]) === "undefined" && j === "lcr_desc")
+							types[data[i][j]] = 1;
+						else if(j === "lcr_desc")
+							types[data[i][j]]++;
+					}
+			}
+			WebStats.BarGraph({
+				title:'Police Incidents by District',
+				chartCanvasID:'crime_areas',
+				values:$.map(districts,function(v){return v;}),
+				XLabels:Object.keys(districts),
+				YLabels:Array(Object.keys(districts).length).join(' ').split(' ')
+			});
+			/*
+			WebStats.PieChart({
+				title:'Types of Police Incidents',
+				chartCanvasID:'crime_types',
+				values:$.map(types,function(v){return v;}),
+				labels:Object.keys(types),
+				width:1200,
+				height:700
+			}); */
+			WebStats.start();
+		});
+		</script>
 		<div class="logo-bar">
 			WebStats<img src="images/logo.png" alt="Logo" />
 		</div>
 
 		<div id="chart">
-			<canvas id="canvas"></canvas>
+			<h1>Raleigh Police Data From Socrata API</h1>
+			<canvas id="crime_areas"></canvas>
 		</div>
+		<!--
+		<div>
+			<canvas id="crime_types"></canvas>
+		</div> -->
 	</body>
 </html>

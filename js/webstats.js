@@ -482,8 +482,8 @@ if(!window.WebStats)
 				return;
 			
 			/* Set Canvas element width/height to be half that of the screen */
-			ctx.canvas.width  = window.innerWidth / 3;
-			ctx.canvas.height = window.innerHeight / 3;
+			ctx.canvas.width  = chartInfo.width ? chartInfo.width : window.innerWidth / 3;
+			ctx.canvas.height = chartInfo.height ? chartInfo.height : window.innerHeight / 3;
 			
 			ctx.canvas.style.backgroundImage = bgImage;
 			ctx.canvas.style.border = "solid 2px " + borderColor					/* Style of border */
@@ -500,9 +500,9 @@ if(!window.WebStats)
 			WebStats.objectArray.push(chartTitleObject);
 			
 			/* Circle Information */
-			var centerX = Math.floor(canvas.width / 2);
-      		var centerY = Math.floor(canvas.height * 0.6);
-      		var radius = Math.floor(canvas.height / 8);
+			var centerX = Math.floor(canvas.width /2 + canvas.width/4);
+      		var centerY = Math.floor(canvas.height /2);
+      		var radius = Math.floor(canvas.height / 2);
       		var circleObject;
       		var sliceLabel;
       		var totalAmount = WebStats.sumOfValues(chartInfo.values, chartInfo.values.length);
@@ -526,7 +526,7 @@ if(!window.WebStats)
 				circleObject.fillStyle = sliceColor;
 				circleObject.borderColor = pieBorderColor;
 				circleObject.borderWidth = 2;
-				circleObject.radius = canvas.height / 30;
+				circleObject.radius = radius;
 				circleObject.endAngle = (Math.PI*2*(chartInfo.values[i]/totalAmount));
 				WebStats.objectArray.push(circleObject);
 				
