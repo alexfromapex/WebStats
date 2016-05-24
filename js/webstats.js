@@ -502,7 +502,7 @@ if(!window.WebStats)
 			/* Circle Information */
 			var centerX = Math.floor(canvas.width /2 + canvas.width/4);
       		var centerY = Math.floor(canvas.height /2);
-      		var radius = Math.floor(canvas.height / 2);
+      		var radius = Math.floor(canvas.height / 3);
       		var circleObject;
       		var sliceLabel;
       		var totalAmount = WebStats.sumOfValues(chartInfo.values, chartInfo.values.length);
