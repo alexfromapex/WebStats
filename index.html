@@ -32,17 +32,54 @@
 				max-width:60%;
 				text-align:center;
 			}
+			p {
+				margin:0 auto;
+				width:60%;
+				text-align:center;
+			}
 		</style>
 		<script type="application/javascript" src="./js/jquery-1.7.2.min.js"></script>
 		<script type="application/javascript" src="./js/webstats.js"></script>
 	</head>
 	<body>
 		<script>
+
+		/* Some static chart data objects */
+
+		var chartData1 = {
+			chartCanvasID: "graph1",
+			title: "Ten Most Populated North Carolina Cities", 
+			values: [731424,403892,269666,229617,228330,200564,135234,106476,104371,84554],
+			XLabels: ["Charlotte","Raleigh","Greensboro","Winston S.","Durham","Fayetteville","Cary","Wilmington","High Point","Greenville"],
+			YAxisLabel: "Number of Individuals"
+		};
+
+		var chartData2 = {
+			chartCanvasID: "graph2",
+			title: "US Population by Age (2011)", 
+			values: [627322,2287311,5462525,1273945],
+			labels: ["Under 5 Yrs","Under 18 Yrs","18-64","65 and Over"],
+			pieBorderColor: "#000"
+		};
+
+		var chartData3 = {
+			chartCanvasID: "graph3",
+			title: "North Carolina University Enrollment (2012)", 
+			values: [31802,28136,25990,22388],
+			XLabels: ["NCSU","UNC","ECU","UNCC"],
+			YAxisLabel: "Number of Individuals"
+		};
+
+		/* Lookup array for future Socrata data */
+
 		var monthNames = ["January", "February", "March", "April", "May", "June",
 		  "July", "August", "September", "October", "November", "December"
 		];
 		var districts = {};
 		var types = {};
+
+		/* JSON request to Raleigh Socrata Data API */
+
 		$.getJSON('https://data.raleighnc.gov/resource/3bhm-we7a.json',function(data){
 			for(var i in data)
 			{
@@ -62,6 +99,9 @@
 							types[data[i][j]]++;
 					}
 			}
+
+			/* Map the JSON AJAX data into a chart object */
+
 			WebStats.BarGraph({
 				title:'Police Incidents by District',
 				chartCanvasID:'crime_areas',
@@ -69,29 +109,36 @@
 				XLabels:Object.keys(districts),
 				YLabels:Array(Object.keys(districts).length).join(' ').split(' ')
 			});
-			/*
-			WebStats.PieChart({
-				title:'Types of Police Incidents',
-				chartCanvasID:'crime_types',
-				values:$.map(types,function(v){return v;}),
-				labels:Object.keys(types),
-				width:1200,
-				height:700
-			}); */
+
+		});
+
+		/* Initialize chart objects and draw them to canvas elements */
+
+		$(document).ready(function(){
+			WebStats.BarGraph(chartData1);
+			WebStats.PieChart(chartData2);
+			WebStats.BarGraph(chartData3);
 			WebStats.start();
 		});
+
 		</script>
 		<div class="logo-bar">
 			WebStats<img src="images/logo.png" alt="Logo" />
 		</div>
 
 		<div id="chart">
-			<h1>Raleigh Police Data From Socrata API</h1>
-			<canvas id="crime_areas"></canvas>
+			<h1>Examples Charts Generated Using the WebStats Canvas API</h1>
+			<p>Refresh the page to see them change colors randomly!<br/><a href="//github.com/alexfromapex/WebStats/blob/master/index.html">View the source</a> on GitHub.</p>
+			<canvas id="crime_areas">Your browser is having trouble showing the HTML Canvas element. Try using a more modern browser.</canvas>
 		</div>
-		<!--
-		<div>
-			<canvas id="crime_types"></canvas>
-		</div> -->
+		<div id="chart1">
+			<canvas id="graph1" width="450" height="250" style="border: 2px solid rgb(204, 204, 204);">Your browser is having trouble showing the HTML Canvas element. Try using a more modern browser.</canvas>
+		</div>
+		<div id="chart1">
+			<canvas id="graph2" width="450" height="250" style="border: 2px solid rgb(204, 204, 204);">Your browser is having trouble showing the HTML Canvas element. Try using a more modern browser.</canvas>
+		</div>
+		<div id="chart1">
+			<canvas id="graph3" width="450" height="250" style="border: 2px solid rgb(204, 204, 204);">Your browser is having trouble showing the HTML Canvas element. Try using a more modern browser.</canvas>
+		</div>
 	</body>
 </html>
