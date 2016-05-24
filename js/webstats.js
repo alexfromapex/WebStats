@@ -193,7 +193,7 @@ if(!window.WebStats)
 						ctx.lineWidth = object.borderWidth;
 						ctx.fillStyle = object.fillStyle;
 						ctx.beginPath();
-						ctx.arc(object.x,object.y,70,lastRadian,lastRadian+object.endAngle,false);
+						ctx.arc(object.x,object.y,object.radius,lastRadian,lastRadian+object.endAngle,false);
 						ctx.lineTo(object.x,object.y);
 						ctx.fill();
 						ctx.stroke();
